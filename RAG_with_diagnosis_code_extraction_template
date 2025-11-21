@@ -1,0 +1,68 @@
+from typing import List, Dict, Tuple
+import json
+import openai  # Assuming OpenAI GPT API; replace with your LLM API client
+
+# Reuse or import the generic execute_search_query function (from the previous code)
+# This function queries the ICD code index given text, returning relevant ICD codes and names.
+
+def build_llm_prompt(clinical_text: str, retrieved_icd: Dict[str, str]) -> str:
+    """
+    Constructs a prompt for the LLM combining clinical text and retrieved ICD codes/descriptions.
+    """
+    prompt_intro = (
+        "You are a clinical coding assistant. Given the clinical text below, "
+        "and the list of potential ICD diagnosis codes with descriptions retrieved from the knowledge base, "
+        "identify and extract the most relevant ICD codes that correspond to the clinical information provided.\n\n"
+    )
+    icd_info = "\n".join([f"ICD Code: {code} | Description: {desc}" for code, desc in retrieved_icd.items()])
+    
+    prompt = f"{prompt_intro}Clinical Text:\n{clinical_text}\n\nPotential ICD Codes:\n{icd_info}\n\nExtracted ICD codes:"
+    return prompt
+
+def extract_diagnosis_codes(clinical_text: str,
+                            top_n_retrieval: int = 50,
+                            icd_index: str = "icd_index") -> List[str]:
+    """
+    Given clinical text, retrieves potential ICD codes using RAG (OpenSearch), then uses an LLM to extract relevant codes.
+    """
+    # Step 1: Retrieve ICD codes related to clinical text from OpenSearch
+    retrieved_hits, retrieved_codes_dict, _ = execute_search_query(
+        description=clinical_text,
+        size=top_n_retrieval,
+        index_name=icd_index,
+        field_name="concept_name",
+        code_field="concept_code"
+    )
+
+    if not retrieved_codes_dict:
+        print("No ICD codes retrieved from knowledge base.")
+        return []
+
+    # Step 2: Build LLM prompt with clinical text and retrieved ICD codes/descriptions
+    prompt = build_llm_prompt(clinical_text, retrieved_codes_dict)
+
+    # Step 3: Query the LLM to extract diagnosis codes (replace with your LLM API calls)
+    # Example using OpenAI GPT-4 (pseudo code - replace 'your-api-key' and API call syntax as needed)
+    openai.api_key = "your-api-key"
+    llm_response = openai.ChatCompletion.create(
+        model="gpt-4",
+        messages=[{"role": "system", "content": "You are a helpful clinical coding assistant."},
+                  {"role": "user", "content": prompt}],
+        max_tokens=100,
+        temperature=0
+    )
+
+    # Parse LLM output; assume it returns ICD codes separated by commas or new lines
+    output_text = llm_response['choices'][0]['message']['content'].strip()
+    extracted_codes = [code.strip() for code in output_text.replace("\n", ",").split(",") if code.strip()]
+
+    return extracted_codes
+
+
+# === Example Usage ===
+if __name__ == "__main__":
+    clinical_note = """
+    Patient presents with acute chest pain and shortness of breath. ECG shows elevated ST segments consistent with myocardial infarction.
+    """
+    diagnosis_codes = extract_diagnosis_codes(clinical_note, top_n_retrieval=50, icd_index="icd_index")
+    print("Extracted ICD Diagnosis Codes:", diagnosis_codes)
