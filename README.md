@@ -10,11 +10,102 @@ Read the instructions from this document to setup and connect to opensearch modu
 [Opensearch Python Client
 ](https://docs.opensearch.org/latest/clients/python-low-level/)
 
-## Opensearch storing data into index
+# Opensearch storing data into index
 1. Download ICD-10-CM link(https://www.cdc.gov/nchs/icd/icd-10-cm/files.html) from or from your source containing a list of ICD-10-CM code and descriptions and load into a pandas dataframe
 2. Download LOINC codes from (https://loinc.org/downloads/) or from your source containing a list of LOINC code and descriptions and load it into a pandas dataframe.
 
-The code for writing the data to index is in : opensearch_upload_data_to_index.py
+## The code for writing the ICD-10-CM & LOINC codes into OpenSearch using Bulk Indexing:
+
+
+### ICD-10-CM & LOINC OpenSearch Bulk Indexing
+
+This repository provides scripts for downloading, loading, and indexing the latest ICD-10-CM and LOINC code sets into OpenSearch for rapid search and analytics workflows.
+
+#### Features
+
+- **Automated Download and Extraction:** Latest official ICD-10-CM and LOINC release files are downloaded directly from CDC and LOINC sources.
+- **Pandas DataFrame Loading:** Code/description tables are loaded into pandas for analysis and QC.
+- **Efficient OpenSearch Bulk Indexing:** All records are written in batches using OpenSearch Python helpers.
+
+#### Requirements
+
+- Python 3.8 or newer
+- Packages:
+  - `pandas`
+  - `requests`
+  - `opensearch-py`
+  - `logging`
+
+Install with:
+
+pip install pandas requests opensearch-py
+
+text
+
+#### Configuration
+
+Place OpenSearch credentials in a `credentials.json` file:
+
+{
+"username": "YOUR_OPENSEARCH_USER",
+"password": "YOUR_OPENSEARCH_PASSWORD"
+}
+
+text
+
+Replace `YOUR_OPENSEARCH_HOST` in the script with your OpenSearch host endpoint.
+
+#### Usage
+
+To download, parse, and index both datasets, run:
+
+python your_script_name.py
+
+text
+
+Main entrypoint:
+
+def main():
+icd_url = "https://www.cdc.gov/nchs/icd/icd-10-cm/files.html"
+icd_df = download_and_load_icd10cm(icd_url)
+
+text
+loinc_url = "https://loinc.org/downloads/"
+loinc_df = download_and_load_loinc(loinc_url)
+
+client = get_opensearch_client_from_cred('credentials.json')
+write_to_elasticsearch(icd_df, client, index_name="icd10cmtest")
+write_to_elasticsearch(loinc_df, client, index_name="loinctest")
+text
+
+#### Functions Overview
+
+- `get_opensearch_client_from_cred`  
+  Loads OpenSearch credentials and returns a configured client.
+
+- `download_and_load_icd10cm`  
+  Downloads official ICD-10-CM zip, extracts, and loads the code/descriptions as a DataFrame.
+
+- `download_and_load_loinc`  
+  Downloads the latest LOINC CSV, extracts, and loads as a DataFrame.
+
+- `write_to_elasticsearch`  
+  Bulk-indexes a DataFrame to the target OpenSearch index using the `helpers.bulk` API for high performance.
+
+#### Bulk Indexing Best Practices
+
+- Bulk upload data in batches using OpenSearch helpers for efficiency, rather than indexing documents individually [web:2][web:4].
+- Consider starting with a `batch_size` of 1000–5000 records or 3–5 MiB per request for best cluster performance. Tune as needed [web:5].
+- Monitor cluster health and adjust shard/replica settings as appropriate for your workload.
+- For very large uploads, set the index's refresh interval to a higher value (or disable refresh) during ingestion and restore afterwards for optimal speed [web:4].
+- Make sure your mapping is correct before bulk upload to avoid mapping conflicts.
+
+#### Reference
+
+- [CDC ICD-10-CM](https://www.cdc.gov/nchs/icd/icd-10-cm.htm)
+- [LOINC Downloads](https://loinc.org/downloads/)
+- [OpenSearch Py Docs – Bulk API](https://opensearch.org/docs/latest/api-reference/document-apis/bulk/)
+
 
 
 
