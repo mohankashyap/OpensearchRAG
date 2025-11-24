@@ -4,6 +4,15 @@ The link to install opensearch module is in:
 [Opensearch Installation
 ](https://docs.opensearch.org/latest/install-and-configure/install-opensearch/index/)
 
+## Installation of opensearch python client:
+
+Read the instructions from this document to setup and connect to opensearch module using python client:
+[Opensearch Python Client
+](https://docs.opensearch.org/latest/clients/python-low-level/)
+
+## Opensearch storing data into index
+
+
 
 # RAG-Based Clinical Code Extraction
 
