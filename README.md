@@ -1,4 +1,10 @@
 ```markdown
+# Installation of Opensearch Module
+
+[Opensearch Installation
+](https://docs.opensearch.org/latest/install-and-configure/install-opensearch/index/)
+
+
 # RAG-Based Clinical Code Extraction
 
 This repository contains Python modules for extracting diagnosis and lab test codes from clinical and lab text using a Retrieval-Augmented Generation (RAG) approach powered by an OpenSearch index and large language models (LLMs).
