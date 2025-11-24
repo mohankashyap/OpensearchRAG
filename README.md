@@ -14,7 +14,7 @@ Read the instructions from this document to setup and connect to opensearch modu
 1. Download ICD-10-CM link(https://www.cdc.gov/nchs/icd/icd-10-cm/files.html) from or from your source containing a list of ICD-10-CM code and descriptions and load into a pandas dataframe
 2. Download LOINC codes from (https://loinc.org/downloads/) or from your source containing a list of LOINC code and descriptions and load it into a pandas dataframe.
 
-## The code for writing the ICD-10-CM & LOINC codes into OpenSearch using Bulk Indexing:
+## The code for writing the ICD-10-CM & LOINC codes into OpenSearch using Bulk Indexing is in opensearch_ICD_LOINC_Index_Upload.py:
 
 
 ### ICD-10-CM & LOINC OpenSearch Bulk Indexing
@@ -59,7 +59,7 @@ Replace `YOUR_OPENSEARCH_HOST` in the script with your OpenSearch host endpoint.
 
 To download, parse, and index both datasets, run:
 
-python your_script_name.py
+python opensearch_ICD_LOINC_Index_Upload.py
 
 text
 
