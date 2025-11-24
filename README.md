@@ -1,4 +1,4 @@
-```markdown
+
 # Installation of Opensearch Module
 
 [Opensearch Installation
