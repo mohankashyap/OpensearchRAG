@@ -11,6 +11,10 @@ Read the instructions from this document to setup and connect to opensearch modu
 ](https://docs.opensearch.org/latest/clients/python-low-level/)
 
 ## Opensearch storing data into index
+1. Download ICD-10-CM link(https://www.cdc.gov/nchs/icd/icd-10-cm/files.html) from or from your source containing a list of ICD-10-CM code and descriptions and load into a pandas dataframe
+2. Download LOINC codes from (https://loinc.org/downloads/) or from your source containing a list of LOINC code and descriptions and load it into a pandas dataframe.
+
+The code for writing the data to index is in : opensearch_upload_data_to_index.py
 
 
 
