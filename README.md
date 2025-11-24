@@ -1,6 +1,6 @@
 
 # Installation of Opensearch Module
-
+The link to install opensearch module is in:
 [Opensearch Installation
 ](https://docs.opensearch.org/latest/install-and-configure/install-opensearch/index/)
 
